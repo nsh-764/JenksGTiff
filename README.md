@@ -49,6 +49,8 @@ Usage :
 .. code:: python
 
     >>> import jenksGTiff
+    >>> jenksGTiff.__all__
+    ['clear_all', 'importGTiff', 'RemoveNoData', 'ReducedArray', 'JenksGTiff', 'DataStats', 'compareStats', 'histogram', 'exportGTiff']
     >>> breaks, array, array_short = jenksGTiff.JenksGTiff('\pwd\input.tif', n_classes, NoDataVal=0, sample_size_ratio=0.1)
     >>> breaks
     [-0.9921568632125854, -0.37254902720451355, -0.05882352963089943, 0.13725490868091583, 0.26274511218070984, 0.40392157435417175]
