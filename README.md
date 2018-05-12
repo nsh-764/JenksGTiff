@@ -8,8 +8,6 @@ Intented compatibility: CPython 2.7+ and 3.4+
 Usage :
 -------
 
-.. code:: python
-
     >>> import jenksGTiff
     >>> breaks, array, array_short = jenksGTiff.JenksGTiff('\pwd\input.tif', n_classes, NoDataVal=0, sample_size_ratio=0.1)
     >>> breaks
@@ -17,7 +15,6 @@ Usage :
   
 Since the image dataset was reduced to a small sample dataset, we compare both the stats and plot histograms.
 
-.. code:: python
     >>> jenksGTiff.compareStats(array, array_short)
     Stats Measures - Value (original dataset) - Value (Sample dataset) 
     
