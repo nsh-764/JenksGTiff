@@ -30,7 +30,7 @@ Since the image dataset was reduced to a small sample dataset, we compare both t
     StandardDeviation : 0.11551328 : 0.117199086
     
     >>> jenksGTiff.histogram(array, 'Image Dataset', bins=134)
-    ![alt text](https://raw.githubusercontent.com/nsh-764/JenksGTiff/blob/master/array_hist.png)
+    ![Alt text](https://raw.githubusercontent.com/nsh-764/JenksGTiff/blob/master/array_hist.png)
 
 
 
