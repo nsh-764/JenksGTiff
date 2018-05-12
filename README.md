@@ -13,14 +13,17 @@ Required Dependancies:
 GDAL :
 
     pip install GDAL
+    
 Numpy :
 
     pip install python-numpy
+    
 matplotlib :
 
     pip install matplotlib
-    or
+    or    
     sudo apt-get install python-matplotlib
+    
 jenkspy : 
       
     pip install jenkspy
@@ -35,9 +38,9 @@ https://mega.nz/#!lXpAmILY!OtTWVZZ1_w0NKrufirnwYivBBhqOiJoV0PcHbFoE6SI
 
 Unzip the folder to temporary location. 
 
-    ubuntu@ubuntu:~$ cd tmp
-    ubuntu@ubuntu:~/tmp$ unzip jenksGTiff.zip
-    ubuntu@ubuntu:~/tmp$ cd jenksGTiff
+    ubuntu@ubuntu:~$ cd tmp    
+    ubuntu@ubuntu:~/tmp$ unzip jenksGTiff.zip    
+    ubuntu@ubuntu:~/tmp$ cd jenksGTiff    
     ubuntu@ubuntu:~/tmp/jenksGTiff$ pip install .
    
 if you get an EnvironmentError: [Errno 13] Permission denied:, use
@@ -46,7 +49,6 @@ if you get an EnvironmentError: [Errno 13] Permission denied:, use
 
 Usage :
 -------
-.. code:: python
 
     >>> import jenksGTiff
     >>> jenksGTiff.__all__
@@ -56,8 +58,6 @@ Usage :
     [-0.9921568632125854, -0.37254902720451355, -0.05882352963089943, 0.13725490868091583, 0.26274511218070984, 0.40392157435417175]
   
 Since the image dataset was reduced to a small sample dataset, we compare both the stats and plot histograms.
-
-.. code:: python
 
     >>> jenksGTiff.compareStats(array, array_short)
     Stats Measures - Value (original dataset) - Value (Sample dataset) 
@@ -83,7 +83,7 @@ This should give us the output geotiff file.
 
 Benchmark against original or larger dataset:
 ---------------------------------------------
-.. code:: python
+
     In [1]: import timeit
     
     In [2]: %timeit jenksGTiff.JenksGTiff('\pwd\input.tif', n_classes=5, NoDataVal=0, sample_size_ratio=0.1)
