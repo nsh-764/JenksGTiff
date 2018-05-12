@@ -161,7 +161,7 @@ def exportGTiff(filename, output, breaks, NoDataVal=0.0):
     rows, cols = array.shape
     
     # Check if NoDataValues lies in the range of data values and change NoDataVal
-    if min(gt_short) <= NoDataVal <= max(gt_short):
+    if min(array.ravel()) <= NoDataVal <= max(array.ravel()):
         array[array == NoDataVal] = -1
     
     # classify the natural break intervals for graduated symbology
