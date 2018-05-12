@@ -1,9 +1,48 @@
-# JenksGTiff
+JenksGTiff
+============================
+
 Apply Jenks Natural Breaks on Geotiff files and outputs image with graduated symbology
 
-Compute "natural breaks" (Jenks algorithm) on list/tuple/numpy.ndarray of integers/floats.
+Compute "natural breaks" (Jenks algorithm) on geotiff by preprocessing the image and thus reducing the runtime to calculate breaks while keeping the output almost more than 90% accurate to the natural break values of original dataset.
 
 Intented compatibility: CPython 2.7+ and 3.4+
+
+Required Dependancies:
+---------------------
+
+GDAL :
+
+    pip install GDAL
+Numpy :
+
+    pip install python-numpy
+matplotlib :
+
+    pip install matplotlib
+    or
+    sudo apt-get install python-matplotlib
+jenkspy : 
+      
+    pip install jenkspy
+  
+
+Installation:
+-------------
+
+The zip file for the python package can be downloaded from the following link:
+
+https://mega.nz/#!lXpAmILY!OtTWVZZ1_w0NKrufirnwYivBBhqOiJoV0PcHbFoE6SI
+
+Unzip the folder to temporary location. 
+
+    ubuntu@ubuntu:~$ cd tmp
+    ubuntu@ubuntu:~/tmp$ unzip jenksGTiff.zip
+    ubuntu@ubuntu:~/tmp$ cd jenksGTiff
+    ubuntu@ubuntu:~/tmp/jenksGTiff$ pip install .
+   
+if you get an EnvironmentError: [Errno 13] Permission denied:, use
+
+    ubuntu@ubuntu:~/tmp/jenksGTiff$ pip install . --user
 
 Usage :
 -------
@@ -30,7 +69,30 @@ Since the image dataset was reduced to a small sample dataset, we compare both t
     StandardDeviation : 0.11551328 : 0.117199086
     
     >>> jenksGTiff.histogram(array, 'Image Dataset', bins=134)
-    ![Alt text](https://raw.githubusercontent.com/nsh-764/JenksGTiff/blob/master/array_hist.png)
+    
+![array_hist](https://user-images.githubusercontent.com/12356414/39952142-2fe02b80-55af-11e8-9d53-a7201bd21e44.png)
+
+    >>> jenksGTiff.histogram(array_short, 'Sample Dataset', bins=134)
+![array_short_hist](https://user-images.githubusercontent.com/12356414/39952179-96a00476-55af-11e8-98d1-45b0842bdcdb.png)
+
+    >>> new_value = jenksGTiff.exportGTiff('\pwd\input.tiff','\cwd\output.tif', breaks, NoDataVal=0)
+    
+This should give us the output geotiff file. 
+
+Benchmark against original or larger dataset:
+---------------------------------------------
+.. code:: python
+    In [1]: import timeit
+    
+    In [2]: %timeit jenksGTiff.JenksGTiff('\pwd\input.tif', n_classes=5, NoDataVal=0, sample_size_ratio=0.1)
+    5.62 s ± 45.4 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+    
+    In [3]: %timeit jenksGTiff.JenksGTiff('\pwd\input.tif', n_classes=5, NoDataVal=0, sample_size_ratio=0.2)
+    25.7 s ± 1.51 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+Just with a 10% of the dataset, it is possible to obtain the Natural Breaks. Taking 10% sample dataset is faster by ~4.6X compared to the 20% sample dataset. This brings down the runtime to calculate the breaks significantly compared running the whole dataset.
 
 
+    
 
+    
