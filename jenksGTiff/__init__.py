@@ -7,7 +7,7 @@ Created on Sat May 12 03:17:55 2018
 """
 
 
-__version__ = "0.1.5"
+__version__ = "0.2.0"
 
 from .jenksGTiff import *
 

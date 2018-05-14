@@ -53,9 +53,12 @@ def ReducedArray(array, sample_size_ratio):
     natural breaks. A sample size ratio can be fed in to determine the sample.
     """
     # Generating a small and random sample data from the larger input array
-    numElements = round(sample_size_ratio*len(array))
+    numElements = int(sample_size_ratio*len(array))
     indices = np.random.permutation(len(array))
-    indices = indices[0:numElements]
+    if isinstance(numElements, int):
+        indices = indices[0:numElements]
+    else:
+        raise TypeError("Please ensure the sample size is an integer.")
     
     # Use the identified indices to assign data values to a new list.
     array_short = []
@@ -116,7 +119,7 @@ def compareStats(array, sample_array):
     for key in stats_arr:
         print (key + ' : ' + str(stats_arr[key]) + ' : ' + str(stats_sample_arr[key]))   
 
-def histogram(array, title, bins=134):
+def histogram(array, title, filename, bins=134):
     """
     Color-coded histograms by height is generated for the array supplied for the
     given bin size.
@@ -141,6 +144,7 @@ def histogram(array, title, bins=134):
     plt.title(title)
     plt.xlabel('Data values')
     plt.ylabel('Counts')
+    plt.savefig(filename+'_'+title+'.png')
     plt.show()
 
 # Save the output GTiff with application of Jenks breaks 
@@ -162,7 +166,7 @@ def exportGTiff(filename, output, breaks, NoDataVal=0.0):
     
     # Check if NoDataValues lies in the range of data values and change NoDataVal
     if min(array.ravel()) <= NoDataVal <= max(array.ravel()):
-        array[array == NoDataVal] = -1
+        array[array == NoDataVal] = -255
     
     # classify the natural break intervals for graduated symbology
     arr_1d = array.ravel()
@@ -170,20 +174,21 @@ def exportGTiff(filename, output, breaks, NoDataVal=0.0):
     for i in range(len(arr_1d)):
         for j in range(len(breaks)-1):
             if breaks[j] <= arr_1d[i] <= breaks[j+1]:
-                arr_1d[i] = 0.2+ (0.8/kclass)*j
+                arr_1d[i] = 55+ (200/kclass)*j
 
     new_array = arr_1d.reshape(rows, cols)
     
     # Generate the output raster GTiff with properties        
     driver = gdal.GetDriverByName('GTiff')
-    outRaster = driver.Create(output, cols, rows, 1, gdal.GDT_Float32)
+    outRaster = driver.Create(output, cols, rows, 1, gdal.GDT_Byte)
     outRaster.SetMetadata(meta)
     outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
     outband = outRaster.GetRasterBand(1)
-    outband.WriteArray(new_array)
     outRasterSRS = osr.SpatialReference()
+    outRasterSRS.ImportFromEPSG(4326)
     outRasterSRS.ImportFromWkt(raster.GetProjectionRef())
     outRaster.SetProjection(outRasterSRS.ExportToWkt())
+    outband.WriteArray(new_array)
     outband.FlushCache()
     
     return new_array
