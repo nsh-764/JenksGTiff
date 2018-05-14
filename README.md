@@ -1,7 +1,7 @@
 JenksGTiff
 ============================
 
-Apply Jenks Natural Breaks on Geotiff files and outputs image with graduated symbology
+Apply Jenks Natural Breaks on Geotiff files and get output image with graduated symbology.
 
 Compute "natural breaks" (Jenks algorithm) on geotiff by preprocessing the image and thus reducing the runtime to calculate breaks while keeping the output almost more than 90% accurate to the natural break values of original dataset.
 
@@ -92,7 +92,7 @@ Benchmark against original or larger dataset:
     In [3]: %timeit jenksGTiff.JenksGTiff('\pwd\input.tif', n_classes=5, NoDataVal=0, sample_size_ratio=0.2)
     25.7 s ± 1.51 s per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
-Just with a 10% of the dataset, it is possible to obtain the Natural Breaks. Taking 10% sample dataset is faster by ~4.6X compared to the 20% sample dataset. This brings down the runtime to calculate the breaks significantly compared running the whole dataset.
+It is possible to obtain the Natural Breaks just with a sample dataset that is 10% of the original dataset. Running the algorithm on 10% sample dataset is ~4.6X faster than that compared to running on 20% sample dataset. This brings down the runtime to calculate the breaks significantly compared to running the whole dataset.
 
 
     
