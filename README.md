@@ -32,9 +32,7 @@ jenkspy :
 Installation:
 -------------
 
-The zip file for the python package can be downloaded from the following link:
-
-https://mega.nz/#!lXpAmILY!OtTWVZZ1_w0NKrufirnwYivBBhqOiJoV0PcHbFoE6SI
+Download the zip file for the python package from github.
 
 Unzip the folder to temporary location. 
 
