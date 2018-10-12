@@ -40,11 +40,17 @@ def RemoveNoData(gtiff, NoDataVal):
     converts the imported GTiff object to array, before deleting the 
     NoData values from the array.
     """
+    band =  gtiff.GetRasterBand(1)
+    
     # Convert the GDAL dataset to an array
-    array = gtiff.GetRasterBand(1).ReadAsArray()
+    array = band.ReadAsArray()
+    
+    NoData = band.GetNoDataValue()
+    if NoData is None:
+        NoData = NoDataVal
     
     # Delete all the NoData Values from the array
-    return array[array != NoDataVal]
+    return array[array != NoData]
 
 def ReducedArray(array, sample_size_ratio):
     """
@@ -155,7 +161,8 @@ def exportGTiff(filename, output, breaks, NoDataVal=0.0):
     """
     # Import GTiff and get the properties
     raster = importGTiff(filename)
-    array = raster.GetRasterBand(1).ReadAsArray()
+    band = raster.GetRasterBand(1)
+    array = band.ReadAsArray()
     meta = raster.GetMetadata()
     geotransform = raster.GetGeoTransform()
     originX = geotransform[0]
@@ -163,21 +170,29 @@ def exportGTiff(filename, output, breaks, NoDataVal=0.0):
     originY = geotransform[3]
     pixelHeight = geotransform[5]
     rows, cols = array.shape
+    NoDataVal = band.GetNoDataValue()
     
-    # Check if NoDataValues lies in the range of data values and change NoDataVal
-    if min(array.ravel()) <= NoDataVal <= max(array.ravel()):
-        array[array == NoDataVal] = -255
+    paddock_indexs = np.where(array != NoDataVal)
+    jenks_data = array[paddock_indexs]
     
-    # classify the natural break intervals for graduated symbology
-    arr_1d = array.ravel()
-    kclass = len(breaks) - 1
-    for i in range(len(arr_1d)):
-        for j in range(len(breaks)-1):
-            if breaks[j] <= arr_1d[i] <= breaks[j+1]:
-                arr_1d[i] = 55+ (200/kclass)*j
-
-    new_array = arr_1d.reshape(rows, cols)
+    n_classes = len(breaks) - 1
+    class_data_flat = np.ones(jenks_data.shape, dtype=np.int16)
+    class_avg = np.zeros(n_classes, dtype=np.float32)
+    class_bounds = np.zeros((n_classes, 2), dtype=np.float32)
     
+    for i in range(1, len(breaks)):
+        class_bounds[i-1, :] = [breaks[i-1], breaks[i]]
+        
+    for i in range(0, n_classes):
+        indices = np.where(np.logical_and(jenks_data >= class_bounds[i, 0], jenks_data <= class_bounds[i, 1]))
+        
+        class_avg[i] = (class_bounds[i, 0] + class_bounds[i, 1]) / 2
+        
+        class_data_flat[indices] = i + 1
+        
+    class_data = np.ones(array.shape, dtype=np.int8) * (-1)  
+    class_data[paddock_indexs] = class_data_flat
+        
     # Generate the output raster GTiff with properties        
     driver = gdal.GetDriverByName('GTiff')
     outRaster = driver.Create(output, cols, rows, 1, gdal.GDT_Byte)
@@ -185,10 +200,9 @@ def exportGTiff(filename, output, breaks, NoDataVal=0.0):
     outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
     outband = outRaster.GetRasterBand(1)
     outRasterSRS = osr.SpatialReference()
-    outRasterSRS.ImportFromEPSG(4326)
     outRasterSRS.ImportFromWkt(raster.GetProjectionRef())
     outRaster.SetProjection(outRasterSRS.ExportToWkt())
-    outband.WriteArray(new_array)
+    outband.WriteArray(class_data)
     outband.FlushCache()
     
-    return new_array
+    return class_data
