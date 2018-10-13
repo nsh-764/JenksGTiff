@@ -94,5 +94,7 @@ It is possible to obtain the Natural Breaks just with a sample dataset that is 1
 
 
     
-
+Author:
+-------
+Nikhil S Hubballi
     
